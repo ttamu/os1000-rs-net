@@ -1,0 +1,11 @@
+target/
+
+kernel.map
+qemu.log
+
+shell.bin
+shell.bin.o
+
+lorem.txt
+disk/
+disk.tar
