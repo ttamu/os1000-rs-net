@@ -34,6 +34,7 @@ fn main() {
                     match core::str::from_utf8(&buf) {
                         Ok(s) => {
                             print(s);
+                            print("\n");
                         }
                         Err(_) => print("error"),
                     }
@@ -45,7 +46,6 @@ fn main() {
             }
             Err(_) => print("command not found\n"),
         }
-        print("\n");
     }
 }
 
