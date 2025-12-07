@@ -1,5 +1,5 @@
 [package]
-name = "os1000-rs"
+name = "os1000-rs-net"
 version = "0.1.0"
 edition = "2021"
 
