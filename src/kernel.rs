@@ -3,6 +3,7 @@
 
 mod fs;
 mod memory;
+mod net;
 mod process;
 mod sbi;
 mod virtio;
