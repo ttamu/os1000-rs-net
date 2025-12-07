@@ -1,7 +1,6 @@
 pub mod checksum;
 pub mod ip;
-
-use core::fmt;
+pub mod loopback;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NetError {
