@@ -3,7 +3,7 @@
 
 mod shell;
 
-use common::{SYS_EXIT, SYS_GETCHAR, SYS_PUTCHAR, SYS_READFILE, SYS_WRITEFILE};
+use common::{SYS_EXIT, SYS_GETCHAR, SYS_PING, SYS_PUTCHAR, SYS_READFILE, SYS_WRITEFILE};
 use core::arch::{asm, naked_asm};
 use core::panic::PanicInfo;
 
@@ -79,4 +79,8 @@ pub fn writefile(filename: &str, buf: &[u8], len: u32) -> u32 {
             len,
         )
     }
+}
+
+pub fn ping(dst_ip_be: u32, seq: u32) -> u32 {
+    unsafe { syscall(SYS_PING, dst_ip_be, seq, 0) }
 }

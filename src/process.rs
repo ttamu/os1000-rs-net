@@ -156,10 +156,15 @@ impl ProcessManager {
                 );
 
                 let mut off = 0;
-                let pimage = image;
+                let pimage = image as *const u8;
                 while off < image_size {
-                    let page = alloc_pages(1) as *mut u32;
-                    ptr::copy(pimage.add(off), page, PAGE_SIZE);
+                    let page = alloc_pages(1) as *mut u8;
+                    let chunk = core::cmp::min(PAGE_SIZE, image_size - off);
+                    ptr::copy_nonoverlapping(pimage.add(off), page, chunk);
+                    if chunk < PAGE_SIZE {
+                        ptr::write_bytes(page.add(chunk), 0, PAGE_SIZE - chunk);
+                    }
+
                     map_page(
                         page_table,
                         (USER_BASE + off) as u32,
