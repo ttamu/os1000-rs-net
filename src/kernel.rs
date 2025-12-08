@@ -9,8 +9,8 @@ mod sbi;
 mod virtio;
 
 use common::{
-    ascii_len, println, read_csr, write_csr, TrapFrame, SYS_EXIT, SYS_GETCHAR, SYS_PUTCHAR,
-    SYS_READFILE, SYS_WRITEFILE,
+    ascii_len, println, read_csr, write_csr, TrapFrame, SYS_EXIT, SYS_GETCHAR, SYS_PING,
+    SYS_PUTCHAR, SYS_READFILE, SYS_WRITEFILE,
 };
 use core::arch::{asm, naked_asm};
 use core::panic::PanicInfo;
@@ -258,6 +258,30 @@ fn handle_syscall(f: *mut TrapFrame) {
                 fs_flush(virtio);
             }
             f.a0 = len as u32;
+        }
+        SYS_PING => {
+            let dst_ip_be = f.a0 as u32;
+            let seq = f.a1 as u16;
+
+            let dst = net::ip::IpV4Addr::from_be_u32(dst_ip_be);
+
+            println!("[syscall] ping {} seq={}", dst, seq);
+
+            // Echo Request 送信
+            let id = 0x1234u16; // TODO: プロセスIDから生成
+            let data = [0u8; 32];
+
+            match net::icmp::send_echo_request(dst, id, seq, &data) {
+                Ok(_) => {
+                    println!("[syscall] Echo Request sent successfully");
+                    net::ip::process_packets();
+                    f.a0 = 0;
+                }
+                Err(e) => {
+                    println!("[syscall] Failed to send Echo Request: {:?}", e);
+                    f.a0 = 0xffff_ffff;
+                }
+            }
         }
         _ => panic!("unexpected syscall a3={:x}", { f.a3 }),
     }

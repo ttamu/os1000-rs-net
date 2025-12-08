@@ -117,6 +117,7 @@ pub const SYS_GETCHAR: u32 = 2;
 pub const SYS_EXIT: u32 = 3;
 pub const SYS_READFILE: u32 = 4;
 pub const SYS_WRITEFILE: u32 = 5;
+pub const SYS_PING : u32 = 6;
 
 pub const VIRTIO_BLK_PADDR: usize = 0x10001000;
 
