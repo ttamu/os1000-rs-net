@@ -47,22 +47,15 @@ fn kernel_main() {
 
     write_csr!("stvec", kernel_entry);
 
-    // let mut buf: [u8; Virtio::SECTOR_SIZE as usize] = [0; Virtio::SECTOR_SIZE as usize];
     let mut virtio = Virtio::new();
     unsafe {
         VIRTIO = core::ptr::addr_of_mut!(virtio);
     }
-    // virtio.read_write_disk(&mut buf, 0, false);
-    // let s = core::str::from_utf8(&buf).unwrap();
-    // println!("lorem.txt {:?}", s);
-    //
-    // let mut buf: [u8; Virtio::SECTOR_SIZE as usize] = [0; Virtio::SECTOR_SIZE as usize];
-    // let message = "hello from kernel!!!\n";
-    // for (i, &byte) in message.as_bytes().iter().enumerate() {
-    //     buf[i] = byte;
-    // }
-    // virtio.read_write_disk(&mut buf, 0, true);
     unsafe { fs_init(&mut virtio) };
+
+    net::ip::init();
+    net::icmp::init();
+    println!("[kernel] Network stack initialized");
 
     unsafe {
         let start = ptr::addr_of!(_binary_shell_bin_start);
@@ -76,6 +69,7 @@ fn kernel_main() {
     println!("switched to idle process");
 
     loop {
+        net::ip::process_packets();
         unsafe { asm!("wfi") };
     }
 }
