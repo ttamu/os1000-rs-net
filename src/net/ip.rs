@@ -166,7 +166,7 @@ pub fn process_packets() {
             let data = &packet[size_of::<IpV4Header>()..];
 
             if header.protocol == IpV4Protocol::icmp() {
-                // super::icmp::handle_icmp_packet(header.src_addr, data);
+                super::icmp::handle_icmp_packet(header.src_addr, data);
             }
 
             loopback.consume();
